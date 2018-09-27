@@ -1,0 +1,35 @@
+<head>
+  <style>
+    body { margin: 0; }
+  </style>
+
+  <script src="//unpkg.com/d3-horizon"></script>
+  <!--<script src="../../dist/d3-horizon.js"></script>-->
+</head>
+<body>
+  <svg id="horizon-chart"></svg>
+
+  <script>
+    const genRandomData = (nPoints = 100) => {
+      let prevVal = 0;
+      return [...new Array(nPoints)].map((_,i) => [i, prevVal += (Math.random() - 0.5)]);
+    };
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    const svg = document.getElementById('horizon-chart');
+    svg.setAttribute('width', width);
+    svg.setAttribute('height', height);
+
+    const data = genRandomData();
+
+    d3.horizon()(svg)
+      .width(width)
+      .height(height)
+      .bands(4)
+      .mode('offset')
+      .data(data)
+      .duration(10000);
+  </script>
+</body>

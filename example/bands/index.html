@@ -1,0 +1,78 @@
+<head>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+    }
+
+    svg {
+      position: relative;
+    }
+
+    #horizon-controls {
+      position: absolute;
+      width: 100%;
+      left: 10px;
+      top:10px;
+      z-index: 1;
+    }
+
+    #horizon-bands {
+      position: absolute;
+      right: 20px;
+    }
+  </style>
+
+  <script src="//d3js.org/d3.v5.min.js"></script>
+  <script src="//unpkg.com/d3-horizon"></script>
+  <!--<script src="../../dist/d3-horizon.js"></script>-->
+</head>
+<body>
+  <div id="horizon-controls">
+    <input name="mode" type="radio" value="mirror" id="horizon-mode-mirror" checked><label for="horizon-mode-mirror"> Mirror</label>
+    <input name="mode" type="radio" value="offset" id="horizon-mode-offset"><label for="horizon-mode-offset"> Offset</label>
+    <span id="horizon-bands"><span id="horizon-bands-value">1</span> <button class="first">&#x2212;</button><button class="last">+</button></span>
+  </div>
+  <div id="horizon-chart"></div>
+
+  <script>
+     const width = window.innerWidth;
+     const height = window.innerHeight;
+
+    const chart = d3.horizon()
+      .width(width)
+      .height(height)
+      .bands(1)
+      .mode('mirror');
+
+    const svg = d3.select('body').append('svg')
+      .attr('width', width)
+      .attr('height', height);
+
+    fetch('unemployment.json')
+      .then(r => r.json())
+      .then(data => {
+        // Offset so that positive is above-average and negative is below-average.
+        const mean = data.rate.reduce((p, v) => p + v, 0) / data.rate.length;
+
+        // Transpose column values to rows.
+        const chartData = data.rate.map((rate, i) => [Date.UTC(data.year[i], data.month[i] - 1), rate - mean]);
+
+       // Render the chart.
+       chart.data(chartData)(svg);
+
+        // Enable mode buttons.
+        d3.selectAll('#horizon-controls input[name=mode]')
+          .on('change', function() { chart.duration(0).mode(this.value) });
+
+        // Enable bands buttons.
+        d3.selectAll('#horizon-bands button').data([-1, 1]).on('click', d => {
+          const n = Math.max(1, chart.bands() + d);
+          d3.select('#horizon-bands-value').text(n);
+          chart.duration(1000)
+            .bands(n)
+            .height(height / n);
+        });
+      });
+  </script>
+</body>
