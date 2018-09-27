@@ -1,4 +1,4 @@
-import { select as d3Select, selection as d3Selection } from 'd3-selection';
+import { select as d3Select } from 'd3-selection';
 import 'd3-transition'; // extends d3-selection prototype
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
 import { area as d3Area, curveBasis as d3CurveBasis } from 'd3-shape';
