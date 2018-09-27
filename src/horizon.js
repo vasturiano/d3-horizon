@@ -9,10 +9,10 @@ import accessorFn from 'accessor-fn';
 
 export default Kapsule({
   props: {
-    width: { default: 960 },
+    width: { default: window.innerWidth },
     height: { default: 40 },
     data: { default: [] },
-    bands: { default: 1 }, // between 1 and 5, typically
+    bands: { default: 4 },
     mode: { default: 'offset' }, // or mirror
     x: { default: d => d[0] },
     y: { default: d => d[1] },
