@@ -8,6 +8,10 @@ Heavily based in previous work by [Mike Bostock](https://github.com/mbostock)'s 
 
 ![Horizon Chart](http://vis.berkeley.edu/papers/horizon/construction.png)
 
+Check out the examples:
+* [Basic with random generated data](https://vasturiano.github.io/d3-horizon/example/basic/) ([source](https://github.com/vasturiano/d3-horizon/blob/master/example/basic/index.html))
+* [Change `bands` / `mode` dynamically](https://vasturiano.github.io/d3-horizon/example/bands/) ([source](https://github.com/vasturiano/d3-horizon/blob/master/example/bands/index.html))
+
 ## Quick start
 
 ```
