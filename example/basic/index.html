@@ -7,7 +7,7 @@
   <!--<script src="../../dist/d3-horizon.js"></script>-->
 </head>
 <body>
-  <svg id="horizon-chart"></svg>
+  <div id="horizon-chart"></div>
 
   <script>
     const genRandomData = (nPoints = 100) => {
@@ -19,8 +19,6 @@
     const height = window.innerHeight;
 
     const svg = document.getElementById('horizon-chart');
-    svg.setAttribute('width', width);
-    svg.setAttribute('height', height);
 
     const data = genRandomData();
 

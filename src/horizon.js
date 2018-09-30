@@ -33,19 +33,21 @@ export default Kapsule({
 
   init(el, state) {
     const isD3Selection = !!el && typeof el === 'object' && !!el.node && typeof el.node === 'function';
-    const svg = isD3Selection ? el : d3Select(el);
+    const d3El = isD3Selection ? el : d3Select(el);
+
+    state.svg = d3El.append('svg');
 
     // unique id for clippaths
     const clipPathId = `d3_horizon_clip_${Math.round(Math.random() * 1e12)}`;
 
     // The clip path is a simple rect
-    state.clipPathRect = svg.append('defs')
+    state.clipPathRect = state.svg.append('defs')
       .append('clipPath')
       .attr('id', clipPathId)
       .append('rect');
 
     // We'll use a container to clip all horizon layers at once
-    state.horizonChart = svg.append('g')
+    state.horizonChart = state.svg.append('g')
       .attr('clip-path', `url(#${clipPathId})`);
   },
 
@@ -70,6 +72,11 @@ export default Kapsule({
         ...state.negativeColorRange.slice(0, 2).reverse(),
         ...state.positiveColorRange.slice(0, 2)
       ]);
+
+    // Adjust svg dimensions
+    state.svg.transition().duration(state.duration)
+      .attr('width', state.width)
+      .attr('height', state.height);
 
     // Adjust clipPath dimensions
     state.clipPathRect.transition().duration(state.duration)

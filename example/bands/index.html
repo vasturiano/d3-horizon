@@ -5,10 +5,6 @@
       margin: 0;
     }
 
-    svg {
-      position: relative;
-    }
-
     #horizon-controls {
       position: absolute;
       width: 100%;
@@ -45,10 +41,6 @@
       .bands(1)
       .mode('mirror');
 
-    const svg = d3.select('body').append('svg')
-      .attr('width', width)
-      .attr('height', height);
-
     fetch('unemployment.json')
       .then(r => r.json())
       .then(data => {
@@ -59,7 +51,7 @@
         const chartData = data.rate.map((rate, i) => [Date.UTC(data.year[i], data.month[i] - 1), rate - mean]);
 
        // Render the chart.
-       chart.data(chartData)(svg);
+       chart.data(chartData)(d3.select('#horizon-chart'));
 
         // Enable mode buttons.
         d3.selectAll('#horizon-controls input[name=mode]')
