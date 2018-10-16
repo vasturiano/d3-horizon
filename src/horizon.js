@@ -36,7 +36,11 @@ export default Kapsule({
     const d3El = isD3Selection ? el : d3Select(el);
     d3El.html(''); // empty content
 
+    // Wipe DOM
+    d3El.html(null);
+
     state.svg = d3El.append('svg');
+    state.svg.style('display', 'block');
 
     // unique id for clippaths
     const clipPathId = `d3_horizon_clip_${Math.round(Math.random() * 1e12)}`;
