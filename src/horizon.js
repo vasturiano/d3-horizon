@@ -63,7 +63,7 @@ export default Kapsule({
     const yAccessor = accessorFn(state.y);
 
     // Aggregate values with same x
-    const byX = indexBy(state.data, xAccessor);
+    const byX = indexBy(state.data, d => +xAccessor(d));
     let horizonData = Object.entries(byX)
       .map(([x, points]) => [+x, state.yAggregation(points.map(yAccessor))])
       .sort(([xa], [xb]) => xa - xb); // sort by sequential x
