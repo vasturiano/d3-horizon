@@ -41,9 +41,10 @@ d3.horizon()
 | <b>data</b>([<i>array</i>]) | Getter/setter for chart data, as an array of data points. The syntax of each item is defined by the `x` and `y` accessor methods. | `[]` |
 | <b>x</b>([<i>fn</i> or <i>str</i>]) | Getter/setter for the data point accessor function to extract the `x` axis values. A `function` receives the data point as input and should return a number. A string indicates the object attribute to use. | `d => d[0]` |
 | <b>y</b>([<i>fn</i> or <i>str</i>]) | Getter/setter for the data point accessor function to extract the `y` axis values. A `function` receives the data point as input and should return a number. A string indicates the object attribute to use. | `d => d[1]` |
-| <b>yExtent</b>([<i>number</i>]) | Getter/setter for the y axis maximum absolute value. By default (`undefined`), the max Y is calculated dynamically from the data. | `undefined` |
 | <b>xMin</b>([<i>number</i>]) | Getter/setter for the x axis minimum value. By default (`undefined`), the min X is calculated dynamically from the data. | `undefined` |
 | <b>xMax</b>([<i>number</i>]) | Getter/setter for the x axis maximum value. By default (`undefined`), the max X is calculated dynamically from the data. | `undefined` |
+| <b>yExtent</b>([<i>number</i>]) | Getter/setter for the y axis maximum absolute value. By default (`undefined`), the max Y is calculated dynamically from the data. | `undefined` |
+| <b>yAggregation</b>([<i>fn([numbers])</i>]) | Getter/setter for the method to reduce multiple values to a single number, in case there is more than one `y` value per unique `x`. | (accumulate) `vals => vals.reduce((a,b) => a+b)` |
 | <b>bands</b>([<i>int</i>]) | Getter/setter for the number of horizon bands to use. | 4 |
 | <b>mode</b>([<i>'offset'</i> or <i>'mirror'</i>]) | Getter/setter for the mode used to represent negative values. `offset` renders the negative values from the top of the chart downwards, while `mirror` represents them upwards as if they were positive values, albeit with a different color. | `offset` |
 | <b>positiveColorRange</b>([<i>[&lt;minColor&gt;, &lt;maxColor&gt;]</i>]) | Getter/setter for the color range to use for the positive value bands. The top band gets assigned the max color, and the other bands are colored according to a linear interpolation of the color range. | `['white', 'midnightBlue']` |

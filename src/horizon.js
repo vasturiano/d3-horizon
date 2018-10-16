@@ -6,6 +6,7 @@ import { range as d3Range } from 'd3-array';
 
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
+import indexBy from 'index-array-by';
 
 export default Kapsule({
   props: {
@@ -16,9 +17,10 @@ export default Kapsule({
     mode: { default: 'offset' }, // or mirror
     x: { default: d => d[0] },
     y: { default: d => d[1] },
-    yExtent: {}, // undefined means it will derived dynamically from the data
-    xMin: {},
+    xMin: {}, // undefined means it will derived dynamically from the data
     xMax: {},
+    yExtent: {},
+    yAggregation: { default: vals => vals.reduce((agg, val) => agg + val) }, // sum reduce
     positiveColorRange: { default: ['white', 'midnightblue'] },
     negativeColorRange: { default: ['white', 'crimson'] },
     duration: { default: 0 }
@@ -59,7 +61,10 @@ export default Kapsule({
     // Compute x- and y-values along with extents.
     const xAccessor = accessorFn(state.x);
     const yAccessor = accessorFn(state.y);
-    let horizonData = state.data.map(d => [xAccessor(d), yAccessor(d)]);
+
+    // Aggregate values with same x
+    const byX = indexBy(state.data, xAccessor);
+    let horizonData = Object.entries(byX).map(([x, points]) => [x, state.yAggregation(points.map(yAccessor))]);
 
     const xMin = state.xMin !== undefined && state.xMin !== null ? state.xMin : Math.min(...horizonData.map(d => d[0]));
     const xMax = state.xMax !== undefined && state.xMax !== null ? state.xMax : Math.max(...horizonData.map(d => d[0]));
