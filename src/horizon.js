@@ -64,10 +64,12 @@ export default Kapsule({
 
     // Aggregate values with same x
     const byX = indexBy(state.data, xAccessor);
-    let horizonData = Object.entries(byX).map(([x, points]) => [x, state.yAggregation(points.map(yAccessor))]);
+    let horizonData = Object.entries(byX)
+      .map(([x, points]) => [+x, state.yAggregation(points.map(yAccessor))])
+      .sort(([xa], [xb]) => xa - xb); // sort by sequential x
 
-    const xMin = state.xMin !== undefined && state.xMin !== null ? state.xMin : Math.min(...horizonData.map(d => d[0]));
-    const xMax = state.xMax !== undefined && state.xMax !== null ? state.xMax : Math.max(...horizonData.map(d => d[0]));
+    const xMin = state.xMin !== undefined && state.xMin !== null ? state.xMin : horizonData[0][0];
+    const xMax = state.xMax !== undefined && state.xMax !== null ? state.xMax : horizonData[horizonData.length - 1][0];
     horizonData = horizonData.filter(([x]) => x >= xMin && x <= xMax); // exclude out of range x values
 
     const yExtent = state.yExtent || Math.max(...horizonData.map(d => Math.abs(d[1])));
