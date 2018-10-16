@@ -17,6 +17,8 @@ export default Kapsule({
     x: { default: d => d[0] },
     y: { default: d => d[1] },
     yExtent: {}, // undefined means it will derived dynamically from the data
+    xMin: {},
+    xMax: {},
     positiveColorRange: { default: ['white', 'midnightblue'] },
     negativeColorRange: { default: ['white', 'crimson'] },
     duration: { default: 0 }
@@ -57,14 +59,17 @@ export default Kapsule({
     // Compute x- and y-values along with extents.
     const xAccessor = accessorFn(state.x);
     const yAccessor = accessorFn(state.y);
-    const horizonData = state.data.map(d => [xAccessor(d), yAccessor(d)]);
-    const xMin = Math.min(...horizonData.map(d => d[0]));
-    const xMax = Math.max(...horizonData.map(d => d[0]));
-    const yMax = Math.max(...horizonData.map(d => Math.abs(d[1])));
+    let horizonData = state.data.map(d => [xAccessor(d), yAccessor(d)]);
+
+    const xMin = state.xMin !== undefined && state.xMin !== null ? state.xMin : Math.min(...horizonData.map(d => d[0]));
+    const xMax = state.xMax !== undefined && state.xMax !== null ? state.xMax : Math.max(...horizonData.map(d => d[0]));
+    horizonData = horizonData.filter(([x]) => x >= xMin && x <= xMax); // exclude out of range x values
+
+    const yExtent = state.yExtent || Math.max(...horizonData.map(d => Math.abs(d[1])));
 
     // Compute the new x- and y-scales, and transform.
     state.xScale.domain([xMin, xMax]).range([0, state.width]);
-    state.yScale.domain([0, state.yExtent || yMax]).range([0, state.height * state.bands]);
+    state.yScale.domain([0, yExtent]).range([0, state.height * state.bands]);
     const horizonTransform = d3HorizonTransform(state.bands, state.height, state.mode);
 
     // Set fill colors
