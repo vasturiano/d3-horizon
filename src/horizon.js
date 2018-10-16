@@ -34,10 +34,7 @@ export default Kapsule({
   init(el, state) {
     const isD3Selection = !!el && typeof el === 'object' && !!el.node && typeof el.node === 'function';
     const d3El = isD3Selection ? el : d3Select(el);
-    d3El.html(''); // empty content
-
-    // Wipe DOM
-    d3El.html(null);
+    d3El.html(null); // Wipe DOM
 
     state.svg = d3El.append('svg');
     state.svg.style('display', 'block');
