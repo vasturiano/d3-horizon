@@ -1,4 +1,4 @@
-import { select as d3Select } from 'd3-selection';
+import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import 'd3-transition'; // extends d3-selection prototype
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
 import { area as d3Area, curveBasis as d3CurveBasis } from 'd3-shape';
@@ -7,6 +7,8 @@ import { range as d3Range } from 'd3-array';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import indexBy from 'index-array-by';
+
+const MIN_HOVER_DISTANCE = 25; // px
 
 export default Kapsule({
   props: {
@@ -23,7 +25,8 @@ export default Kapsule({
     yAggregation: { default: vals => vals.reduce((agg, val) => agg + val) }, // sum reduce
     positiveColorRange: { default: ['white', 'midnightblue'] },
     negativeColorRange: { default: ['white', 'crimson'] },
-    duration: { default: 0 }
+    duration: { default: 0 },
+    onHover: {}
   },
 
   stateInit() {
@@ -65,7 +68,7 @@ export default Kapsule({
     // Aggregate values with same x
     const byX = indexBy(state.data, d => +xAccessor(d));
     let horizonData = Object.entries(byX)
-      .map(([x, points]) => [+x, state.yAggregation(points.map(yAccessor))])
+      .map(([x, points]) => [+x, state.yAggregation(points.map(yAccessor)), points])
       .sort(([xa], [xb]) => xa - xb); // sort by sequential x
 
     const xMin = state.xMin !== undefined && state.xMin !== null ? state.xMin : horizonData[0][0];
@@ -91,6 +94,43 @@ export default Kapsule({
     state.svg.transition().duration(state.duration)
       .attr('width', state.width)
       .attr('height', state.height);
+
+    // Add hover interaction
+    let hoverPoint = null;
+    state.svg
+      .on('mousemove', function() {
+        if (!state.onHover) return; // no need to check
+
+        const newHoverPoint = lookupPoint(state.xScale.invert(d3Mouse(this)[0]));
+        if (hoverPoint !== newHoverPoint) {
+          hoverPoint = newHoverPoint;
+          state.onHover(hoverPoint ? {
+            x: hoverPoint[0],
+            y: hoverPoint[1],
+            points: hoverPoint[2]
+          } : null);
+        }
+
+        function lookupPoint(x) {
+          let lastPoint = null;
+          let lastDistance = Infinity;
+          horizonData.some(d => {
+            const distance = Math.abs(x - d[0]);
+            if (distance > lastDistance) return true; // remaining points are farther
+            lastDistance = distance;
+            lastPoint = d;
+          });
+
+          const mouseDistance = state.xScale(lastDistance) - state.xScale(0);
+          if (mouseDistance > MIN_HOVER_DISTANCE) return null; // closest point too far from mouse
+          return lastPoint;
+        }
+      })
+      .on('mouseleave', function() {
+        if (state.onHover) {
+          state.onHover(null); // signal hover out when leaving canvas
+        }
+      });
 
     // Adjust clipPath dimensions
     state.clipPathRect.transition().duration(state.duration)
