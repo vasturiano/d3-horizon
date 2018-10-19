@@ -4,7 +4,7 @@
 
 A D3 based component that renders a [Horizon type area chart](https://hci.stanford.edu/publications/2009/heer-horizon-chi09.pdf).
 
-Heavily based in previous work by [Mike Bostock](https://github.com/mbostock)'s [d3-horizon plugin](https://github.com/d3/d3-plugins/tree/master/horizon), migrated for `D3 v4+` compatibility.
+Heavily based in previous work by [Mike Bostock](https://github.com/mbostock)'s [d3-horizon plugin](https://github.com/d3/d3-plugins/tree/master/horizon), extended to support `HTML5 Canvas` rendering and migrated for `D3 v4+` compatibility.
 
 ![Horizon Chart](http://vis.berkeley.edu/papers/horizon/construction.png)
 
