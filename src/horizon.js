@@ -25,8 +25,8 @@ export default Kapsule({
     yAggregation: { default: vals => vals.reduce((agg, val) => agg + val) }, // sum reduce
     positiveColorRange: { default: ['white', 'midnightblue'] },
     negativeColorRange: { default: ['white', 'crimson'] },
-    duration: { default: 0 },
-    onHover: {}
+    duration: { default: 0, triggerUpdate: false },
+    onHover: { triggerUpdate: false }
   },
 
   stateInit() {
@@ -38,26 +38,20 @@ export default Kapsule({
     }
   },
 
-  init(el, state) {
+  init(el, state, { useCanvas = true }) {
     const isD3Selection = !!el && typeof el === 'object' && !!el.node && typeof el.node === 'function';
     const d3El = isD3Selection ? el : d3Select(el);
     d3El.html(null); // Wipe DOM
 
-    state.svg = d3El.append('svg');
-    state.svg.style('display', 'block');
+    state.useCanvas = useCanvas;
 
-    // unique id for clippaths
-    const clipPathId = `d3_horizon_clip_${Math.round(Math.random() * 1e12)}`;
-
-    // The clip path is a simple rect
-    state.clipPathRect = state.svg.append('defs')
-      .append('clipPath')
-      .attr('id', clipPathId)
-      .append('rect');
-
-    // We'll use a container to clip all horizon layers at once
-    state.horizonChart = state.svg.append('g')
-      .attr('clip-path', `url(#${clipPathId})`);
+    if (useCanvas) {
+      state.canvas = d3El.append('canvas');
+      state.phantomDom = d3Select(document.createElement('phantom'));
+    } else { // SVG mode
+      state.svg = d3El.append('svg');
+      state.svg.style('display', 'block');
+    }
   },
 
   update(state) {
@@ -80,7 +74,6 @@ export default Kapsule({
     // Compute the new x- and y-scales, and transform.
     state.xScale.domain([xMin, xMax]).range([0, state.width]);
     state.yScale.domain([0, yExtent]).range([0, state.height * state.bands]);
-    const horizonTransform = d3HorizonTransform(state.bands, state.height, state.mode);
 
     // Set fill colors
     state.colorScale
@@ -90,14 +83,9 @@ export default Kapsule({
         ...state.positiveColorRange.slice(0, 2)
       ]);
 
-    // Adjust svg dimensions
-    state.svg.transition().duration(state.duration)
-      .attr('width', state.width)
-      .attr('height', state.height);
-
     // Add hover interaction
     let hoverPoint = null;
-    state.svg
+    state[state.useCanvas ? 'canvas' : 'svg']
       .on('mousemove', function() {
         if (!state.onHover) return; // no need to check
 
@@ -132,48 +120,139 @@ export default Kapsule({
         }
       });
 
-    // Adjust clipPath dimensions
-    state.clipPathRect.transition().duration(state.duration)
-      .attr('width', state.width)
-      .attr('height', state.height);
+    const bandData = d3Range(-1, -state.bands - 1, -1).concat(d3Range(1, state.bands + 1));
 
-    // Instantiate each copy of the path with different transforms.
-    const path = state.horizonChart.selectAll('path')
-      .data(d3Range(-1, -state.bands - 1, -1).concat(d3Range(1, state.bands + 1)), Number);
+    state.useCanvas ? canvasUpdate() : svgUpdate();
 
-    const y0 = state.height * state.bands;
+    function svgUpdate() {
+      // Adjust svg dimensions
+      state.svg.transition().duration(state.duration)
+        .attr('width', state.width)
+        .attr('height', state.height);
 
-    const d0 = state.area
-      .x(d => state.xScale(d[0]))
-      .y0(y0)
-      .y1(y0)
+      const y0 = state.height * state.bands;
+      const d0 = state.area
+        .x(d => state.xScale(d[0]))
+        .y0(y0)
+        .y1(y0)
       (horizonData);
 
-    const d1 = state.area
-      .y1(d => state.height * state.bands - state.yScale(d[1]))
+      const d1 = state.area
+        .y1(d => state.height * state.bands - state.yScale(d[1]))
       (horizonData);
 
-    path.exit()
-      .transition().duration(state.duration)
-      .attr('transform', horizonTransform)
-      .remove();
+      const horizonTransform = d3HorizonTransform(state.bands, state.height, state.mode);
 
-    const newPath = path.enter()
-      .append('path')
+      // Instantiate each copy of the path with different transforms.
+      const path = state.svg.selectAll('path')
+        .data(bandData, Number);
+
+        path.exit()
+          .transition().duration(state.duration)
+          .attr('transform', horizonTransform)
+          .remove();
+
+      const newPath = path.enter()
+        .append('path')
         .style('fill', state.colorScale)
         .attr('transform', horizonTransform)
         .attr('d', d0);
 
-    path.merge(newPath)
-      .transition().duration(state.duration)
-        .style('fill', state.colorScale)
-        .attr('transform', horizonTransform)
-        .attr('d', d1);
+      path.merge(newPath)
+        .transition().duration(state.duration)
+          .style('fill', state.colorScale)
+          .attr('transform', horizonTransform)
+          .attr('d', d1);
+
+      //
+
+      function d3HorizonTransform(bands, h, mode) {
+        return mode === 'offset'
+          ? d => `translate(0,${(d + (d < 0) - bands) * h})`
+          : d => `${d < 0 ? 'scale(1,-1)' : ''} translate(0,${(d - bands) * h})`;
+      }
+    }
+
+    function canvasUpdate() {
+      // Instantiate each copy of the path with different transforms.
+      const band = state.phantomDom.selectAll('band')
+        .data(bandData, Number);
+
+      const yTranslate = getYTranslate(state.bands, state.height, state.mode);
+      const yScale = getYScale(state.mode);
+
+      band.exit()
+        .transition().duration(state.duration)
+        .attr('yTranslate', yTranslate)
+        .attr('yScale', yScale)
+        .remove();
+
+      const newBand = band.enter()
+        .append('band')
+        .attr('fillColor', state.colorScale)
+        .attr('yTranslate', yTranslate)
+        .attr('yScale', yScale)
+        .attr('ySize', 0);
+
+      band.merge(newBand)
+        .transition().duration(state.duration)
+        .attr('fillColor', state.colorScale)
+        .attr('yTranslate', yTranslate)
+        .attr('yScale', yScale)
+        .attr('ySize', 1);
+
+      // Set initial canvas size
+      if (!state.phantomDom.attr('canvasWidth')) state.phantomDom.attr('canvasWidth', state.width);
+      if (!state.phantomDom.attr('canvasHeight')) state.phantomDom.attr('canvasHeight', state.height);
+
+      state.phantomDom.transition().duration(state.duration)
+        .attr('canvasWidth', state.width)
+        .attr('canvasHeight', state.height)
+        .tween('drawAnimate', () => draw); // draw at every transition tick
+
+      // canvas draw section
+      const ctx = state.canvas.node().getContext('2d');
+      state.area
+        .x(d => state.xScale(d[0]))
+        .y0(state.height * state.bands)
+        .context(ctx);
+
+      //
+
+      function draw() {
+        // Adjust canvas dimensions (and clear)
+        const canvasWidth = state.phantomDom.attr('canvasWidth');
+        const canvasHeight = state.phantomDom.attr('canvasHeight');
+        state.canvas.attr('width', canvasWidth).attr('height', canvasHeight);
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        // Add area per band
+        state.phantomDom.selectAll('band').each(function () {
+          const band = d3Select(this);
+
+          ctx.save();
+          ctx.scale(1, band.attr('yScale'));
+          ctx.translate(0, band.attr('yTranslate'));
+          ctx.beginPath();
+          state.area
+            .y1(d => (state.height * state.bands - state.yScale(d[1]) * band.attr('ySize')))
+          (horizonData);
+          ctx.restore();
+
+          ctx.fillStyle = band.attr('fillColor');
+          ctx.fill();
+        });
+      }
+    }
+
+    function getYTranslate(bands, h, mode) {
+      return mode === 'offset'
+        ? d => (d + (d < 0) - bands) * h
+        : d => (d - bands) * h;
+    }
+
+    function getYScale(mode) {
+      return d => (mode === 'offset' || d >= 0) ? 1 : -1;
+    }
   }
 });
-
-function d3HorizonTransform(bands, h, mode) {
-  return mode === 'offset'
-    ? d => `translate(0,${(d + (d < 0) - bands) * h})`
-    : d => `${d < 0 ? 'scale(1,-1)' : ''} translate(0,${(d - bands) * h})`;
-}
