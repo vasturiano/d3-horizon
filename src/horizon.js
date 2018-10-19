@@ -40,7 +40,7 @@ export default Kapsule({
 
   init(el, state, { useCanvas = true }) {
     const isD3Selection = !!el && typeof el === 'object' && !!el.node && typeof el.node === 'function';
-    const d3El = isD3Selection ? el : d3Select(el);
+    const d3El = d3Select(isD3Selection ? el.node() : el);
     d3El.html(null); // Wipe DOM
 
     state.useCanvas = useCanvas;
