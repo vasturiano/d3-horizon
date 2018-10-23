@@ -39,7 +39,10 @@
       .width(width)
       .height(height)
       .bands(1)
-      .mode('mirror');
+      .mode('mirror')
+      .tooltipContent(({ x, y }) =>
+        `<b>${new Date(x).toLocaleDateString()}</b>: ${Math.abs(Math.round(y * 1e3) / 1e3)} ${y > 0 ? 'above' : 'below'} average`
+      );
 
     fetch('unemployment.json')
       .then(r => r.json())
