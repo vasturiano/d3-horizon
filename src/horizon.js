@@ -26,6 +26,7 @@ export default Kapsule({
     positiveColorRange: { default: ['white', 'midnightblue'] },
     negativeColorRange: { default: ['white', 'crimson'] },
     duration: { default: 0, triggerUpdate: false },
+    tooltipContent: { default: ({x, y}) => `<b>${x}</b>: ${y}`, triggerUpdate: false },
     onHover: { triggerUpdate: false }
   },
 
@@ -42,6 +43,9 @@ export default Kapsule({
     const isD3Selection = !!el && typeof el === 'object' && !!el.node && typeof el.node === 'function';
     const d3El = d3Select(isD3Selection ? el.node() : el);
     d3El.html(null); // Wipe DOM
+
+    d3El.attr('class', 'horizon-container');
+    state.tooltip = d3El.append('div').attr('class', 'horizon-tooltip');
 
     state.useCanvas = useCanvas;
 
@@ -87,16 +91,29 @@ export default Kapsule({
     let hoverPoint = null;
     state[state.useCanvas ? 'canvas' : 'svg']
       .on('mousemove', function() {
-        if (!state.onHover) return; // no need to check
+        if (!state.onHover && !state.tooltipContent) return; // no need to check
 
-        const newHoverPoint = lookupPoint(state.xScale.invert(d3Mouse(this)[0]));
+        const mousePos = d3Mouse(this);
+
+        if (state.tooltipContent) {
+          state.tooltip
+            .style('display', 'inline')
+            .style('left', mousePos[0] + 'px')
+            .style('top', mousePos[1] + 'px');
+        }
+
+        const newHoverPoint = lookupPoint(state.xScale.invert(mousePos[0]));
         if (hoverPoint !== newHoverPoint) {
           hoverPoint = newHoverPoint;
-          state.onHover(hoverPoint ? {
+
+          const hoverData = hoverPoint ? {
             x: hoverPoint[0],
             y: hoverPoint[1],
             points: hoverPoint[2]
-          } : null);
+          } : null;
+
+          state.onHover && state.onHover(hoverData);
+          hoverData && state.tooltipContent && state.tooltip.html(state.tooltipContent(hoverData));
         }
 
         function lookupPoint(x) {
@@ -115,6 +132,7 @@ export default Kapsule({
         }
       })
       .on('mouseleave', function() {
+        state.tooltip.style('display', 'none');
         if (state.onHover) {
           state.onHover(null); // signal hover out when leaving canvas
         }
