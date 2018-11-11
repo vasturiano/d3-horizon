@@ -69,11 +69,13 @@ export default Kapsule({
       .map(([x, points]) => [+x, state.yAggregation(points.map(yAccessor)), points])
       .sort(([xa], [xb]) => xa - xb); // sort by sequential x
 
-    const xMin = state.xMin !== undefined && state.xMin !== null ? state.xMin : horizonData[0][0];
-    const xMax = state.xMax !== undefined && state.xMax !== null ? state.xMax : horizonData[horizonData.length - 1][0];
+    const xMin = state.xMin !== undefined && state.xMin !== null ? state.xMin :
+      horizonData.length ? horizonData[0][0] : 0;
+    const xMax = state.xMax !== undefined && state.xMax !== null ? state.xMax :
+      horizonData.length ? horizonData[horizonData.length - 1][0] : 1;
     horizonData = horizonData.filter(([x]) => x >= xMin && x <= xMax); // exclude out of range x values
 
-    const yExtent = state.yExtent || Math.max(...horizonData.map(d => Math.abs(d[1])));
+    const yExtent = state.yExtent || Math.max(0, ...horizonData.map(d => Math.abs(d[1])));
 
     // Compute the new x- and y-scales, and transform.
     state.xScale.domain([xMin, xMax]).range([0, state.width]);
