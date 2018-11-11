@@ -44,16 +44,17 @@ export default Kapsule({
     const d3El = d3Select(isD3Selection ? el.node() : el);
     d3El.html(null); // Wipe DOM
 
-    d3El.attr('class', 'horizon-container');
-    state.tooltip = d3El.append('div').attr('class', 'horizon-tooltip');
+    const container = d3El.append('div');
+    container.attr('class', 'horizon-container');
+    state.tooltip = container.append('div').attr('class', 'horizon-tooltip');
 
     state.useCanvas = useCanvas;
 
     if (useCanvas) {
-      state.canvas = d3El.append('canvas');
+      state.canvas = container.append('canvas');
       state.phantomDom = d3Select(document.createElement('phantom'));
     } else { // SVG mode
-      state.svg = d3El.append('svg');
+      state.svg = container.append('svg');
       state.svg.style('display', 'block');
     }
   },
