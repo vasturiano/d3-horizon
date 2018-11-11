@@ -1,3 +1,4 @@
+import './index.css';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import 'd3-transition'; // extends d3-selection prototype
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
