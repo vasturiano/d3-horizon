@@ -44,6 +44,7 @@ d3.horizon()
 | <b>xMin</b>([<i>number</i>]) | Getter/setter for the x axis minimum value. By default (`undefined`), the min X is calculated dynamically from the data. | `undefined` |
 | <b>xMax</b>([<i>number</i>]) | Getter/setter for the x axis maximum value. By default (`undefined`), the max X is calculated dynamically from the data. | `undefined` |
 | <b>yExtent</b>([<i>number</i>]) | Getter/setter for the y axis maximum absolute value. By default (`undefined`), the max Y is calculated dynamically from the data. | `undefined` |
+| <b>yScaleExp</b>([<i>number</i>]) | Getter/setter for the y axis scale exponent. Only values `> 0` are supported. An exponent of `1` (default) represents a linear Y scale. | `1` |
 | <b>yAggregation</b>([<i>fn([numbers])</i>]) | Getter/setter for the method to reduce multiple values to a single number, in case there is more than one `y` value per unique `x`. | `vals => vals.reduce((a,b) => a+b)` (accumulate) |
 | <b>bands</b>([<i>int</i>]) | Getter/setter for the number of horizon bands to use. | 4 |
 | <b>mode</b>([<i>'offset'</i> or <i>'mirror'</i>]) | Getter/setter for the mode used to represent negative values. `offset` renders the negative values from the top of the chart downwards, while `mirror` represents them upwards as if they were positive values, albeit with a different color. | `offset` |

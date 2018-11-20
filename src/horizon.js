@@ -1,7 +1,7 @@
 import './index.css';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import 'd3-transition'; // extends d3-selection prototype
-import { scaleLinear as d3ScaleLinear } from 'd3-scale';
+import { scaleLinear as d3ScaleLinear, scalePow as d3ScalePow } from 'd3-scale';
 import { area as d3Area, curveBasis as d3CurveBasis } from 'd3-shape';
 import { range as d3Range } from 'd3-array';
 
@@ -23,6 +23,7 @@ export default Kapsule({
     xMin: {}, // undefined means it will derived dynamically from the data
     xMax: {},
     yExtent: {},
+    yScaleExp: { default: 1 },
     yAggregation: { default: vals => vals.reduce((agg, val) => agg + val) }, // sum reduce
     positiveColorRange: { default: ['white', 'midnightblue'] },
     negativeColorRange: { default: ['white', 'crimson'] },
@@ -35,7 +36,7 @@ export default Kapsule({
     return {
       area: d3Area().curve(d3CurveBasis),
       xScale: d3ScaleLinear(),
-      yScale: d3ScaleLinear(),
+      yScale: d3ScalePow(),
       colorScale: d3ScaleLinear()
     }
   },
@@ -81,7 +82,10 @@ export default Kapsule({
 
     // Compute the new x- and y-scales, and transform.
     state.xScale.domain([xMin, xMax]).range([0, state.width]);
-    state.yScale.domain([0, yExtent]).range([0, state.height * state.bands]);
+    state.yScale
+      .domain([0, yExtent])
+      .range([0, state.height * state.bands])
+      .exponent(Math.abs(state.yScaleExp || 1));
 
     // Set fill colors
     state.colorScale
