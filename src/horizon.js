@@ -137,6 +137,7 @@ export default Kapsule({
       })
       .on('mouseleave', function() {
         state.tooltip.style('display', 'none');
+        hoverPoint = null;
         if (state.onHover) {
           state.onHover(null); // signal hover out when leaving canvas
         }
