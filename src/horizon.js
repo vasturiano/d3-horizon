@@ -76,7 +76,11 @@ export default Kapsule({
       horizonData.length ? horizonData[0][0] : 0;
     const xMax = state.xMax !== undefined && state.xMax !== null ? state.xMax :
       horizonData.length ? horizonData[horizonData.length - 1][0] : 1;
-    horizonData = horizonData.filter(([x]) => x >= xMin && x <= xMax); // exclude out of range x values
+
+    const xVals = horizonData.map(([x]) => x);
+    const xMinClosestPoint = Math.min(xMin, Math.max(...xVals.filter(x => x < xMin)));
+    const xMaxClosestPoint = Math.max(xMax, Math.min(...xVals.filter(x => x > xMax)));
+    horizonData = horizonData.filter(([x]) => x >= xMinClosestPoint && x <= xMaxClosestPoint); // exclude out of range x values
 
     const yExtent = state.yExtent || Math.max(0, ...horizonData.map(d => Math.abs(d[1])));
 
