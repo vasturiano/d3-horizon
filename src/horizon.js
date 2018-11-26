@@ -2,7 +2,7 @@ import './index.css';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import 'd3-transition'; // extends d3-selection prototype
 import { scaleLinear as d3ScaleLinear, scalePow as d3ScalePow } from 'd3-scale';
-import { area as d3Area, curveBasis as d3CurveBasis } from 'd3-shape';
+import { area as d3Area, curveBasis as d3CurveBasis, curveLinear as d3CurveLinear } from 'd3-shape';
 import { range as d3Range } from 'd3-array';
 
 import Kapsule from 'kapsule';
@@ -27,6 +27,7 @@ export default Kapsule({
     yAggregation: { default: vals => vals.reduce((agg, val) => agg + val) }, // sum reduce
     positiveColorRange: { default: ['white', 'midnightblue'] },
     negativeColorRange: { default: ['white', 'crimson'] },
+    interpolationCurve: { default: d3CurveBasis, onChange: (curve, state) => state.area.curve(curve || d3CurveLinear )},
     duration: { default: 0, triggerUpdate: false },
     tooltipContent: { default: ({x, y}) => `<b>${x}</b>: ${y}`, triggerUpdate: false },
     onHover: { triggerUpdate: false }
@@ -34,7 +35,7 @@ export default Kapsule({
 
   stateInit() {
     return {
-      area: d3Area().curve(d3CurveBasis),
+      area: d3Area(),
       xScale: d3ScaleLinear(),
       yScale: d3ScalePow(),
       colorScale: d3ScaleLinear()
