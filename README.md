@@ -29,7 +29,7 @@ then
 ```
 d3.horizon()
     .data(<myData>)
-    (<domNode>);
+    (<domElement>);
 ```
 
 ## API reference
