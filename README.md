@@ -34,6 +34,17 @@ d3.horizon()
 
 ## API reference
 
+### Initialisation
+```
+d3.horizon({ configOptions })(<domElement>)
+```
+
+| Config options | Description | Default |
+| --- | --- | :--: |
+| <b>useCanvas</b>: <i>boolean</i> | Whether to use **HTML5 Canvas** (`true`) or **SVG** (`false`) as rendering method. | `true` |
+
+### Methods
+
 | Method | Description | Default |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------- |:-------------:|
 | <b>width</b>([<i>px</i>]) | Getter/setter for the chart width. | *&lt;window width&gt;* |
