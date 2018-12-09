@@ -108,14 +108,15 @@ export default Kapsule({
 
         const mousePos = d3Mouse(this);
 
+        const newHoverPoint = lookupPoint(state.xScale.invert(mousePos[0]));
+
+        state.tooltip.style('display', state.tooltipContent && newHoverPoint ? 'inline' : 'none');
         if (state.tooltipContent) {
           state.tooltip
-            .style('display', 'inline')
             .style('left', mousePos[0] + 'px')
             .style('top', mousePos[1] + 'px');
         }
 
-        const newHoverPoint = lookupPoint(state.xScale.invert(mousePos[0]));
         if (hoverPoint !== newHoverPoint) {
           hoverPoint = newHoverPoint;
 
