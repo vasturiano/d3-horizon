@@ -32,7 +32,8 @@ export default Kapsule({
     interpolationCurve: { default: d3CurveBasis, onChange: (curve, state) => state.area.curve(curve || d3CurveLinear )},
     duration: { default: 0, triggerUpdate: false },
     tooltipContent: { default: ({x, y}) => `<b>${x}</b>: ${y}`, triggerUpdate: false },
-    onHover: { triggerUpdate: false }
+    onHover: { triggerUpdate: false },
+    onClick: { triggerUpdate: false }
   },
 
   stateInit() {
@@ -135,8 +136,17 @@ export default Kapsule({
     // Add hover interaction
     let hoverPoint = null;
     state[state.useCanvas ? 'canvas' : 'svg']
+      .on('click', function() {
+        state.onClick && state.onClick(
+          hoverPoint ? {
+            x: hoverPoint[0],
+            y: hoverPoint[1],
+            points: hoverPoint[2]
+          } : null
+        );
+      })
       .on('mousemove', function() {
-        if (!state.onHover && !state.tooltipContent) return; // no need to check
+        if (!state.onHover && !state.onClick && !state.tooltipContent) return; // no need to check
 
         const mousePos = d3Mouse(this);
 
