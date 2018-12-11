@@ -25,8 +25,10 @@ export default Kapsule({
     yExtent: {},
     yScaleExp: { default: 1 },
     yAggregation: { default: vals => vals.reduce((agg, val) => agg + val) }, // sum reduce
-    positiveColorRange: { default: ['white', 'midnightblue'] },
-    negativeColorRange: { default: ['white', 'crimson'] },
+    positiveColors: { default: ['white', 'midnightblue'] },
+    negativeColors: { default: ['white', 'crimson'] },
+    positiveColorStops: {},
+    negativeColorStops: {},
     interpolationCurve: { default: d3CurveBasis, onChange: (curve, state) => state.area.curve(curve || d3CurveLinear )},
     duration: { default: 0, triggerUpdate: false },
     tooltipContent: { default: ({x, y}) => `<b>${x}</b>: ${y}`, triggerUpdate: false },
@@ -93,11 +95,41 @@ export default Kapsule({
       .exponent(Math.abs(state.yScaleExp || 1));
 
     // Set fill colors
+    const domains = {};
+    const ranges = {};
+    ['negative', 'positive'].forEach(type => {
+      const rangeProp = `${type}Colors`;
+      const stopsProp = `${type}ColorStops`;
+      const range = state[rangeProp].slice();
+      const stops = (state[stopsProp] || []).slice().sort((a, b) => a - b); // stops ascending
+
+      if (range.length < 2) {
+        throw new Error(`${rangeProp} (${JSON.stringify(range)}) must include at least 2 colors`);
+      }
+
+      if (stops.some(n => n <= 0 || n >= 1)) {
+        throw new Error(`${stopsProp} (${JSON.stringify(stops)}) must only include values within ]0, 1[`);
+      }
+
+      // Populate domain with default (uniform) stops
+      const genArray = (size, min = 0, max = 1) =>
+        [...new Array(size)].map((_, idx) => idx).map(d3ScaleLinear().domain([0, size - 1]).range([min, max])); // uniformly spaced between [min,max]
+
+      let domain = [0, ...stops.slice(0, range.length - 2)];
+      const lastStop = domain.pop();
+      domain = domain.concat(genArray(range.length - domain.length, lastStop, 1));
+
+      domains[type] = domain;
+      ranges[type] = range;
+    });
     state.colorScale
-      .domain([-state.bands, 0, 0, state.bands])
+      .domain([
+        ...domains.negative.map(v => -v).reverse(),
+        ...domains.positive
+      ].map(v => Math.round(v * state.bands)))
       .range([
-        ...state.negativeColorRange.slice(0, 2).reverse(),
-        ...state.positiveColorRange.slice(0, 2)
+        ...ranges.negative.reverse(),
+        ...ranges.positive
       ]);
 
     // Add hover interaction
