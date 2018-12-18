@@ -57,12 +57,16 @@ export default Kapsule({
     state.useCanvas = useCanvas;
 
     if (useCanvas) {
-      state.canvas = container.append('canvas').style('display', 'block');
+      state.canvas = container.append('canvas');
       state.phantomDom = d3Select(document.createElement('phantom'));
     } else { // SVG mode
       state.svg = container.append('svg');
-      state.svg.style('display', 'block');
     }
+
+    state[useCanvas ? 'canvas' : 'svg']
+      .style('display', 'block')
+      .attr('width', state.width)
+      .attr('height', state.height);
   },
 
   update(state) {
