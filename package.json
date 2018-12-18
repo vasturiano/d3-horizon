@@ -1,6 +1,6 @@
 {
   "name": "d3-horizon",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "description": "An horizon area chart D3 component",
   "unpkg": "dist/d3-horizon.min.js",
   "main": "dist/d3-horizon.common.js",
