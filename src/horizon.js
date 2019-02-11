@@ -160,7 +160,8 @@ export default Kapsule({
         if (state.tooltipContent) {
           state.tooltip
             .style('left', mousePos[0] + 'px')
-            .style('top', mousePos[1] + 'px');
+            .style('top', mousePos[1] + 'px')
+            .style('transform', `translate(-${mousePos[0] / state.width * 100}%, 25px)`); // adjust horizontal position to not exceed chart boundaries
         }
 
         if (hoverPoint !== newHoverPoint) {
