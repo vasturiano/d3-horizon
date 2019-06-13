@@ -1,6 +1,9 @@
-# d3.horizon
+d3.horizon
+==============
 
-[![NPM](https://nodei.co/npm/d3-horizon.png?compact=true)](https://nodei.co/npm/d3-horizon/)
+[![NPM package][npm-img]][npm-url]
+[![Build Size][build-size-img]][build-size-url]
+[![Dependencies][dependencies-img]][dependencies-url]
 
 A D3 based component that renders a [Horizon type area chart](https://hci.stanford.edu/publications/2009/heer-horizon-chi09.pdf).
 
@@ -68,3 +71,12 @@ d3.horizon({ configOptions })(<domElement>)
 | <b>tooltipContent</b>([<i>fn({x, y, points})</i>]) | Getter/setter for the tooltip content accessor function. Accepts plain-text or HTML. A value of `null` will permanently hide the tooltip. | ```({ x, y }) => `${x}: ${y}` ``` |
 | <b>onHover</b>([<i>fn({x, y, points})</i>]) | Callback function for chart hover events. Gets triggered every time the mouse moves in/out of a different point hover area. Includes the point information as single argument, with `x`, `y` and `points` (list of all data points associated with the corresponding `x` value) data. If no point is in the `x` proximity of the mouse pointer, a value of `null` is returned instead. | - |
 | <b>onClick</b>([<i>fn({x, y, points})</i>]) | Callback function for chart click events. Includes the currently hovered point information as single argument, with `x`, `y` and `points` (list of all data points associated with the corresponding `x` value) data. If no point is in the `x` proximity of the mouse pointer, a value of `null` is returned instead. | - |
+
+
+[npm-img]: https://img.shields.io/npm/v/d3-horizon.svg
+[npm-url]: https://npmjs.org/package/d3-horizon
+[build-size-img]: https://img.shields.io/bundlephobia/minzip/d3-horizon.svg
+[build-size-url]: https://bundlephobia.com/result?p=d3-horizon
+[dependencies-img]: https://img.shields.io/david/vasturiano/d3-horizon.svg
+[dependencies-url]: https://david-dm.org/vasturiano/d3-horizon
+
