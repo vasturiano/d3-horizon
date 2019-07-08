@@ -1,6 +1,6 @@
 {
   "name": "d3-horizon",
-  "version": "1.9.8",
+  "version": "1.9.9",
   "description": "An horizon area chart D3 component",
   "license": "MIT",
   "unpkg": "dist/d3-horizon.min.js",
