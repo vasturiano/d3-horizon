@@ -19,7 +19,7 @@
     }
   </style>
 
-  <script src="//d3js.org/d3.v5.min.js"></script>
+  <script src="//unpkg.com/d3@6"></script>
   <script src="//unpkg.com/d3-horizon"></script>
   <!--<script src="../../dist/d3-horizon.js"></script>-->
 </head>
@@ -61,7 +61,7 @@
           .on('change', function() { chart.duration(0).mode(this.value) });
 
         // Enable bands buttons.
-        d3.selectAll('#horizon-bands button').data([-1, 1]).on('click', d => {
+        d3.selectAll('#horizon-bands button').data([-1, 1]).on('click', (ev, d) => {
           const n = Math.max(1, chart.bands() + d);
           d3.select('#horizon-bands-value').text(n);
           chart.duration(1000)

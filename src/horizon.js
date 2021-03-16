@@ -1,5 +1,5 @@
 import './index.css';
-import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
+import { select as d3Select, pointer as d3Pointer } from 'd3-selection';
 import 'd3-transition'; // extends d3-selection prototype
 import { scaleLinear as d3ScaleLinear, scalePow as d3ScalePow } from 'd3-scale';
 import { area as d3Area, curveBasis as d3CurveBasis, curveLinear as d3CurveLinear } from 'd3-shape';
@@ -149,10 +149,10 @@ export default Kapsule({
           } : null
         );
       })
-      .on('mousemove', function() {
+      .on('mousemove', function(ev) {
         if (!state.onHover && !state.onClick && !state.tooltipContent) return; // no need to check
 
-        const mousePos = d3Mouse(this);
+        const mousePos = d3Pointer(ev);
 
         const newHoverPoint = lookupPoint(state.xScale.invert(mousePos[0]));
 
