@@ -50,7 +50,7 @@ export default Kapsule({
     const d3El = d3Select(isD3Selection ? el.node() : el);
     d3El.html(null); // Wipe DOM
 
-    const container = d3El.append('div');
+    const container = state.container = d3El.append('div');
     container.attr('class', 'horizon-container');
     state.tooltip = container.append('div').attr('class', 'horizon-tooltip');
 
@@ -199,6 +199,9 @@ export default Kapsule({
           state.onHover(null); // signal hover out when leaving canvas
         }
       });
+
+    // set pointer if onClick is set
+    state.container.node().classList[state.onClick ? 'add' : 'remove']('clickable');
 
     const bandData = d3Range(-1, -state.bands - 1, -1).concat(d3Range(1, state.bands + 1));
 
