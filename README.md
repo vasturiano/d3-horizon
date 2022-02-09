@@ -3,7 +3,7 @@ d3.horizon
 
 [![NPM package][npm-img]][npm-url]
 [![Build Size][build-size-img]][build-size-url]
-[![Dependencies][dependencies-img]][dependencies-url]
+[![NPM Downloads][npm-downloads-img]][npm-downloads-url]
 
 A D3 based component that renders a [Horizon type area chart](https://hci.stanford.edu/publications/2009/heer-horizon-chi09.pdf).
 
@@ -17,19 +17,19 @@ Check out the examples:
 
 ## Quick start
 
-```
+```js
 import d3 from 'd3-horizon';
 ```
 or
-```
+```js
 d3.horizon = require('d3-horizon');
 ```
 or even
-```
+```html
 <script src="//unpkg.com/d3-horizon"></script>
 ```
 then
-```
+```js
 d3.horizon()
     .data(<myData>)
     (<domElement>);
@@ -38,7 +38,7 @@ d3.horizon()
 ## API reference
 
 ### Initialisation
-```
+```js
 d3.horizon({ configOptions })(<domElement>)
 ```
 
@@ -73,10 +73,10 @@ d3.horizon({ configOptions })(<domElement>)
 | <b>onClick</b>([<i>fn({x, y, points})</i>]) | Callback function for chart click events. Includes the currently hovered point information as single argument, with `x`, `y` and `points` (list of all data points associated with the corresponding `x` value) data. If no point is in the `x` proximity of the mouse pointer, a value of `null` is returned instead. | - |
 
 
-[npm-img]: https://img.shields.io/npm/v/d3-horizon.svg
+[npm-img]: https://img.shields.io/npm/v/d3-horizon
 [npm-url]: https://npmjs.org/package/d3-horizon
-[build-size-img]: https://img.shields.io/bundlephobia/minzip/d3-horizon.svg
+[build-size-img]: https://img.shields.io/bundlephobia/minzip/d3-horizon
 [build-size-url]: https://bundlephobia.com/result?p=d3-horizon
-[dependencies-img]: https://img.shields.io/david/vasturiano/d3-horizon.svg
-[dependencies-url]: https://david-dm.org/vasturiano/d3-horizon
+[npm-downloads-img]: https://img.shields.io/npm/dt/d3-horizon
+[npm-downloads-url]: https://www.npmtrends.com/d3-horizon
 
