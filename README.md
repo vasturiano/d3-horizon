@@ -20,11 +20,7 @@ Check out the examples:
 ```js
 import d3 from 'd3-horizon';
 ```
-or
-```js
-d3.horizon = require('d3-horizon');
-```
-or even
+or using a *script* tag
 ```html
 <script src="//unpkg.com/d3-horizon"></script>
 ```
