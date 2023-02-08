@@ -1,6 +1,6 @@
 {
   "name": "d3-horizon",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "An horizon area chart D3 component",
   "license": "MIT",
   "type": "module",
