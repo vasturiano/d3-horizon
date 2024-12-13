@@ -1,1 +1,1 @@
-export { default as horizon } from './horizon';
+export { default } from './horizon';

@@ -19,9 +19,8 @@
     }
   </style>
 
-  <script src="//unpkg.com/d3@6"></script>
   <script src="//unpkg.com/d3-horizon"></script>
-  <!--<script src="../../dist/d3-horizon.js"></script>-->
+<!--  <script src="../../dist/d3-horizon.js"></script>-->
 </head>
 <body>
   <div id="horizon-controls">
@@ -31,11 +30,13 @@
   </div>
   <div id="horizon-chart"></div>
 
-  <script>
-     const width = window.innerWidth;
-     const height = window.innerHeight;
+  <script type="module">
+    import * as d3 from '//esm.sh/d3-selection';
 
-    const chart = d3.horizon()
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    const chart = new Horizon(document.getElementById('horizon-chart'))
       .width(width)
       .height(height)
       .bands(1)
@@ -54,7 +55,7 @@
         const chartData = data.rate.map((rate, i) => [Date.UTC(data.year[i], data.month[i] - 1), rate - mean]);
 
        // Render the chart.
-       chart.data(chartData)(d3.select('#horizon-chart'));
+       chart.data(chartData);
 
         // Enable mode buttons.
         d3.selectAll('#horizon-controls input[name=mode]')

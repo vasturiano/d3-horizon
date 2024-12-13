@@ -5,7 +5,7 @@ d3.horizon
 [![Build Size][build-size-img]][build-size-url]
 [![NPM Downloads][npm-downloads-img]][npm-downloads-url]
 
-A D3 based component that renders a [Horizon type area chart](https://hci.stanford.edu/publications/2009/heer-horizon-chi09.pdf).
+A component that renders a [Horizon type area chart](https://hci.stanford.edu/publications/2009/heer-horizon-chi09.pdf).
 
 Heavily based in previous work by [Mike Bostock](https://github.com/mbostock)'s [d3-horizon plugin](https://github.com/d3/d3-plugins/tree/master/horizon), extended to support `HTML5 Canvas` rendering and migrated for `D3 v4+` compatibility.
 
@@ -18,7 +18,7 @@ Check out the examples:
 ## Quick start
 
 ```js
-import d3 from 'd3-horizon';
+import Horizon from 'd3-horizon';
 ```
 or using a *script* tag
 ```html
@@ -26,16 +26,15 @@ or using a *script* tag
 ```
 then
 ```js
-d3.horizon()
-    .data(<myData>)
-    (<domElement>);
+new Horizon(<domElement>)
+  .data(<myData>);
 ```
 
 ## API reference
 
 ### Initialisation
 ```js
-d3.horizon({ configOptions })(<domElement>)
+new Horizon(<domElement>, { configOptions })
 ```
 
 | Config options | Description | Default |

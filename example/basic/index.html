@@ -15,19 +15,12 @@
       return [...new Array(nPoints)].map((_,i) => [i, prevVal += (Math.random() - 0.5)]);
     };
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    const svg = document.getElementById('horizon-chart');
-
-    const data = genRandomData();
-
-    d3.horizon()(svg)
-      .width(width)
-      .height(height)
+    new Horizon(document.getElementById('horizon-chart'))
+      .width(window.innerWidth)
+      .height(window.innerHeight)
       .bands(4)
       .mode('offset')
-      .data(data)
+      .data(genRandomData())
       .duration(10000)
       .tooltipContent(null);
   </script>

@@ -9,8 +9,7 @@ const { name, homepage, version, dependencies } = pkg;
 
 const umdConf = {
   format: 'umd',
-  extend: true,
-  name: 'd3',
+  name: 'Horizon',
   banner: `// Version ${version} ${name} - ${homepage}`
 };
 
@@ -39,7 +38,7 @@ export default [
     ]
   },
   { // ES module
-    input: 'src/horizon.js',
+    input: 'src/index.js',
     output: [
       {
         format: 'es',
