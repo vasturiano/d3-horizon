@@ -8,6 +8,7 @@ import { range as d3Range } from 'd3-array';
 import Kapsule from 'kapsule';
 import accessorFn from 'accessor-fn';
 import indexBy from 'index-array-by';
+import Tooltip from 'float-tooltip';
 
 const MIN_HOVER_DISTANCE = 25; // px
 
@@ -52,7 +53,7 @@ export default Kapsule({
 
     const container = state.container = d3El.append('div');
     container.attr('class', 'horizon-container');
-    state.tooltip = container.append('div').attr('class', 'horizon-tooltip');
+    state.tooltip = new Tooltip(container);
 
     state.useCanvas = useCanvas;
 
@@ -156,13 +157,7 @@ export default Kapsule({
 
         const newHoverPoint = lookupPoint(state.xScale.invert(mousePos[0]));
 
-        state.tooltip.style('display', state.tooltipContent && newHoverPoint ? 'inline' : 'none');
-        if (state.tooltipContent) {
-          state.tooltip
-            .style('left', mousePos[0] + 'px')
-            .style('top', mousePos[1] + 'px')
-            .style('transform', `translate(-${mousePos[0] / state.width * 100}%, 25px)`); // adjust horizontal position to not exceed chart boundaries
-        }
+        (!state.tooltipContent || !newHoverPoint) && state.tooltip.content(null);
 
         if (hoverPoint !== newHoverPoint) {
           hoverPoint = newHoverPoint;
@@ -174,7 +169,7 @@ export default Kapsule({
           } : null;
 
           state.onHover && state.onHover(hoverData);
-          hoverData && state.tooltipContent && state.tooltip.html(state.tooltipContent(hoverData));
+          hoverData && state.tooltipContent && state.tooltip.content(state.tooltipContent(hoverData));
         }
 
         function lookupPoint(x) {
@@ -193,7 +188,7 @@ export default Kapsule({
         }
       })
       .on('mouseleave', function() {
-        state.tooltip.style('display', 'none');
+        state.tooltip.content(null);
         hoverPoint = null;
         if (state.onHover) {
           state.onHover(null); // signal hover out when leaving canvas
